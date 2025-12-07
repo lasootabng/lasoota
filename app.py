@@ -1,27 +1,27 @@
-from typing import Literal
 from fastapi import FastAPI
-from pydantic import BaseModel, EmailStr, constr
-from library.otp.otp import generate_otp
-from library.gmail.mail import mail_otp
-
-app =FastAPI()
+from services import api_router
 
 
-class User(BaseModel):
-    full_name: str
-    email: EmailStr
-    phone: constr(min_length=10, max_length=13)  # type: ignore
-    role: Literal["Provider", "Customer"]
+app = FastAPI(
+    title="freelancer engine",
+    description=""" This **freelancer-engine** is like online superhero 🦸‍♂️<br />
+    Taking care of all the GPT and AI stuff, so you can focus on making your chat ideas
+      come to life 🌱<br />
+    So, grab your coding cape and join the fun! Our Chat Service is here to make your development
+      journey super exciting and full of learnings 🔭""",
+    version="0.1",
+    contact={
+        "name": ":-  Bipul Kumar Singh",
+        "email": "bipulsinghkashyap@gmail.com"
+    },
+    docs_url="/freelancer-documentation",
+    redoc_url=None,
+    openapi_url=None
+)
 
-@app.get("/", tags=["health"])
+@app.api_route("/health", methods=["GET", "POST"], tags=["Health"])
 async def health():
     return {"status": "ok", "message": "Bihar services API is running!"}
 
 
-# register
-@app.post("/register", tags=["Register User"])
-async def register_user(user: User):
-    otp = generate_otp()
-    print(otp)
-    mail_otp('kumarbipulsingh@gmail.com', otp, "Bipul")
-    return user
+app.include_router(api_router)
