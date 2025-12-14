@@ -14,7 +14,7 @@ router = APIRouter()
 
 SECRET_KEY = "e1f6a9c3b7d2e5f8a1c9d4e7b6a2f9c1d3e5a7b8c9d0f2a6b4c8d9e3f7a2b5c"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 300
 
 
 
@@ -29,7 +29,6 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-# register user
 @router.post("/register")
 async def register_user(user_reg: UserReg):
     # check user phone is already registered or not
@@ -68,7 +67,7 @@ async def register_user(user_reg: UserReg):
     # mail_otp(user.email, otp, "Bipul")
     return user_reg
 
-# validate otp
+
 @router.post("/validate-otp")
 def validate_otp(otp_val: ValidOTP):
     logger.info(otp_val)
@@ -89,20 +88,19 @@ def validate_otp(otp_val: ValidOTP):
         logger.info("Deleting OTP")
         delete_pending_signup(otp_val.phone)
 
-        # send data to home page
+        # send Access token
         logger.info("Generating Access Token")
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
-            data={"sub": "Bipulsingh"}, expires_delta=access_token_expires
+            data={"sub": "Bipulsingh", "phone": otp_val.phone}, expires_delta=access_token_expires
         )
         logger.info("Return response")
-        return response_formatter(Token(access_token=access_token, token_type="bearer"))
+        return response_formatter(Token(access_token=access_token, token_type="bearer", phone=otp_val.phone))
     else:
         logger.info("invalid OTP")
     return response_formatter({
         "success": False})
 
-# login user
 @router.post("/login")
 def login_user(user_login: userLogin):
 
@@ -128,3 +126,25 @@ def login_user(user_login: userLogin):
     # sending otp to user
     # mail_otp(user.email, otp, "Bipul")
     return {"success": True}
+
+@router.post("/resend-otp")
+def resend_otp(user_login: userLogin):
+    try:
+         # Generate OTP for login
+        otp, otp_timeout = generate_otp()
+        
+        # Save OTP in redisk
+        save_pending_signup(
+            user_login.phone,
+            {
+                "otp": otp,
+                "otp_timeout": str(otp_timeout),
+            }
+        )
+        logger.info("OTP saved")
+        # sending otp to user
+        # mail_otp(user.email, otp, "Bipul")
+        return response_formatter({"status": "OTP is sent to register mobile number."})
+    except Exception as ex:
+        logger.exception(ex)
+        return response_formatter(data={"success": False}, status_code=500)

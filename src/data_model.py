@@ -18,3 +18,7 @@ class ValidOTP(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    phone: constr(min_length=10, max_length=13)  # type: ignore
+
+class ContactUS(BaseModel):
+    comment: str

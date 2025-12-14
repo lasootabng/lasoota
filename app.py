@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from services import api_router
+from services import api_router, basic_router
 from fastapi.middleware.cors import CORSMiddleware 
 
 
@@ -16,7 +16,7 @@ app = FastAPI(
         "email": "bipulsinghkashyap@gmail.com"
     }
 )
-  
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -25,9 +25,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.api_route("/health", methods=["GET", "POST"], tags=["Health"])
-async def health():
+@app.api_route("/system_health", methods=["GET", "POST"], tags=["Health"])
+async def system_health():
     return {"status": "ok", "message": "Bihar services API is running!"}
 
 
+app.include_router(basic_router)
 app.include_router(api_router)
