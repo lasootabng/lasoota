@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from services import api_router
+from fastapi.middleware.cors import CORSMiddleware 
 
 
 app = FastAPI(
@@ -9,14 +10,19 @@ app = FastAPI(
       come to life 🌱<br />
     So, grab your coding cape and join the fun! Our Chat Service is here to make your development
       journey super exciting and full of learnings 🔭""",
-    version="0.1",
+    version="0.0.1",
     contact={
         "name": ":-  Bipul Kumar Singh",
         "email": "bipulsinghkashyap@gmail.com"
-    },
-    docs_url="/freelancer-documentation",
-    redoc_url=None,
-    openapi_url=None
+    }
+)
+  
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.api_route("/health", methods=["GET", "POST"], tags=["Health"])

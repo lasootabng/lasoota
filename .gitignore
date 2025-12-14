@@ -36,9 +36,10 @@ MANIFEST
 pip-log.txt
 pip-delete-this-directory.txt
 
+# Project files
 client_secret.json
 .credentials/
-
+configuration/
 
 # Unit test / coverage reports
 htmlcov/
