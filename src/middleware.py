@@ -24,7 +24,6 @@ def token_decoder(token):
 def authentication(token: Annotated[str, Header()], request: Request):
     """ Authentication Middleware """
     try:
-        logger.info(f"AUth: {token}")
         token = token.split()
         request.state.context = token_decoder(token[1])
         logger.info(f"Token decoded! {request.state.context}")
