@@ -1,0 +1,787 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "freelancer engine",
+        "description": " This **freelancer-engine** is like online superhero 🦸‍♂️<br />\n    Taking care of all the GPT and AI stuff, so you can focus on making your chat ideas\n      come to life 🌱<br />\n    So, grab your coding cape and join the fun! Our Chat Service is here to make your development\n      journey super exciting and full of learnings 🔭",
+        "contact": {
+            "name": ":-  Bipul Kumar Singh",
+            "email": "bipulsinghkashyap@gmail.com"
+        },
+        "version": "0.0.1"
+    },
+    "paths": {
+        "/freelance_health": {
+            "get": {
+                "tags": [
+                    "Freelance Health"
+                ],
+                "summary": "Freelance Health",
+                "operationId": "freelance_health_freelance_health_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Freelance Health"
+                ],
+                "summary": "Freelance Health",
+                "operationId": "freelance_health_freelance_health_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Register User",
+                "operationId": "register_user_register_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserReg"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/validate-otp": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Validate Otp",
+                "operationId": "validate_otp_validate_otp_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ValidOTP"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Login User",
+                "operationId": "login_user_login_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/userLogin"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/resend-otp": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Resend Otp",
+                "operationId": "resend_otp_resend_otp_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/userLogin"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/org/contact-us": {
+            "post": {
+                "tags": [
+                    "Organization"
+                ],
+                "summary": "Contact Us",
+                "operationId": "contact_us_org_contact_us_post",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Token"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Body_contact_us_org_contact_us_post"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/org/about-us": {
+            "get": {
+                "tags": [
+                    "Organization"
+                ],
+                "summary": "About Us",
+                "operationId": "about_us_org_about_us_get",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Token"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/get-user": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get User",
+                "operationId": "get_user_get_user_get",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Token"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/get-address": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get Address",
+                "operationId": "get_address_get_address_get",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Token"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/add-address": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Add Address",
+                "operationId": "add_address_add_address_post",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Token"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserAddress"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/delete-address": {
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete Address",
+                "operationId": "delete_address_delete_address_delete",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Token"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RemoveAddress"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/update-address": {
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update Address",
+                "operationId": "update_address_update_address_put",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Token"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateAddress"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/home": {
+            "get": {
+                "tags": [
+                    "Landing"
+                ],
+                "summary": "Home Page",
+                "operationId": "home_page_home_get",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Token"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Body_contact_us_org_contact_us_post": {
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/ContactUS"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "data"
+                ],
+                "title": "Body_contact_us_org_contact_us_post"
+            },
+            "ContactUS": {
+                "properties": {
+                    "comment": {
+                        "type": "string",
+                        "title": "Comment"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "comment"
+                ],
+                "title": "ContactUS"
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "RemoveAddress": {
+                "properties": {
+                    "address_id": {
+                        "type": "integer",
+                        "title": "Address Id"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "address_id"
+                ],
+                "title": "RemoveAddress"
+            },
+            "UpdateAddress": {
+                "properties": {
+                    "user_address": {
+                        "$ref": "#/components/schemas/UserAddress"
+                    },
+                    "remove_address": {
+                        "$ref": "#/components/schemas/RemoveAddress"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "user_address",
+                    "remove_address"
+                ],
+                "title": "UpdateAddress"
+            },
+            "UserAddress": {
+                "properties": {
+                    "full_name": {
+                        "type": "string",
+                        "title": "Full Name"
+                    },
+                    "house": {
+                        "type": "string",
+                        "title": "House"
+                    },
+                    "area": {
+                        "type": "string",
+                        "title": "Area"
+                    },
+                    "landmark": {
+                        "type": "string",
+                        "title": "Landmark"
+                    },
+                    "pincode": {
+                        "type": "string",
+                        "maxLength": 6,
+                        "minLength": 6,
+                        "title": "Pincode"
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "maxLength": 13,
+                        "minLength": 10,
+                        "title": "Mobile"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "full_name",
+                    "house",
+                    "area",
+                    "landmark",
+                    "pincode",
+                    "mobile"
+                ],
+                "title": "UserAddress"
+            },
+            "UserReg": {
+                "properties": {
+                    "full_name": {
+                        "type": "string",
+                        "title": "Full Name"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "Email"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "maxLength": 13,
+                        "minLength": 10,
+                        "title": "Phone"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "Provider",
+                            "Customer"
+                        ],
+                        "title": "Role"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "full_name",
+                    "email",
+                    "phone",
+                    "role"
+                ],
+                "title": "UserReg"
+            },
+            "ValidOTP": {
+                "properties": {
+                    "otp": {
+                        "type": "integer",
+                        "title": "Otp"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "maxLength": 13,
+                        "minLength": 10,
+                        "title": "Phone"
+                    },
+                    "new_login": {
+                        "type": "boolean",
+                        "title": "New Login"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "otp",
+                    "phone",
+                    "new_login"
+                ],
+                "title": "ValidOTP"
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            },
+            "userLogin": {
+                "properties": {
+                    "phone": {
+                        "type": "string",
+                        "maxLength": 13,
+                        "minLength": 10,
+                        "title": "Phone"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "phone"
+                ],
+                "title": "userLogin"
+            }
+        }
+    }
+}
