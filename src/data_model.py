@@ -22,3 +22,18 @@ class Token(BaseModel):
 
 class ContactUS(BaseModel):
     comment: str
+
+class UserAddress(BaseModel):
+    full_name: str
+    house: str
+    area: str
+    landmark: str
+    pincode: constr(min_length=6, max_length=6) # type: ignore
+    mobile: constr(min_length=10, max_length=13) # type: ignore
+
+class RemoveAddress(BaseModel):
+    address_id: int
+
+class UpdateAddress(BaseModel):
+    user_address: UserAddress
+    remove_address: RemoveAddress

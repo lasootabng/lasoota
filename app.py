@@ -25,8 +25,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.api_route("/system_health", methods=["GET", "POST"], tags=["Health"])
-async def system_health():
+@app.api_route("/freelance_health", methods=["GET", "POST"], tags=["Freelance Health"])
+async def freelance_health():
     return {"status": "ok", "message": "Bihar services API is running!"}
 
 

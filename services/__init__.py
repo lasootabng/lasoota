@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from . import login, org, user
+from . import login, org, user, landing
 from src.middleware import authentication
 
 basic_router = APIRouter()
@@ -13,4 +13,5 @@ basic_router.include_router(login.router, tags=["Login"])
 # API router with tokens
 api_router.include_router(org.router, prefix="/org", tags=['Organization'])
 api_router.include_router(user.router, tags=["User"])
+api_router.include_router(landing.router, tags=["Landing"])
 
