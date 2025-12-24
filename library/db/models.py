@@ -15,7 +15,7 @@ class Users(Base):
     email = Column(String(255), unique=True, nullable=False, index=True)
     phone_number = Column(String(20), nullable=True)
     full_name = Column(String(255), nullable=True)
-    password_hash = Column(String(255), nullable=False)
+    # password_hash = Column(String(255), nullable=False)
     role_type = Column(user_role_enum, nullable=False, default='Customer')
     is_verified = Column(Boolean, nullable=False, default=False)
     created_on = Column(DateTime(timezone=True), server_default=func.now())

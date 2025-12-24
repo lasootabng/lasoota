@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, HTTPException
 from datetime import datetime
 from src.logger import logger
-from src.constants import response_formatter
-from src.data_model import UserAddress, RemoveAddress, UpdateAddress
+# from src.constants import response_formatter
+from src.data_model import UserAddress, RemoveAddress, UpdateAddress, UpdateUser
 from library.db import session_scope, Users, UserAddress as UA, receive_query
 
 router = APIRouter()
@@ -13,21 +13,42 @@ def get_user(request: Request):
         context = request.state.context
         logger.info(f"user info: {context}")
         with session_scope() as session:
-            user_data = session.query(Users.full_name, Users.email, Users.phone_number).filter(Users.phone_number == context['phone']).all()
+            user_data = session.query(Users.full_name, Users.email, Users.phone_number, Users.role_type).filter(Users.phone_number == context['phone']).all()
         if user_data:
             user_data = user_data[0]
         else:
-            return response_formatter(data={"message": "something wents wrong!"}, status_code=500)
+            raise HTTPException(status_code=401, detail="something wents wrong!")
         logger.info(f"users Data: {user_data}")
         user_info = {
-                    "user": {"name": user_data.full_name,
-                             "phone": user_data.phone_number,
+                    "user": {"full_name": user_data.full_name,
+                             "phone_number": user_data.phone_number,
+                             "user_role": user_data.role_type
                              },
-                    "helplineNo": '7870743082'
+                    "helpline_number": '7870743082'
                 }
-        return response_formatter(data=user_info)
+        return user_info
     except Exception as ex:
         logger.exception(ex)
+
+@router.post("/update-user")
+async def register_user(request: Request, user: UpdateUser):
+
+    try:
+        context = request.state.context
+
+        # check user phone is already registered or not
+        with session_scope() as session:
+            session.query(Users).filter(Users.phone_number==context['Phone']).update({
+                    Users.full_name: user.full_name,
+                    Users.email: user.email
+                })
+            session.commit()
+            logger.info("user details updated")
+        return {"success": True}
+    except Exception as ex:
+        logger.exception(ex)
+        return {"success": False}
+
 
 @router.get("/get-address")
 def get_address(request: Request):
@@ -36,8 +57,9 @@ def get_address(request: Request):
         logger.info(f"user context: {context}")
         with session_scope() as session:
             address_data = receive_query(session.query(UA.address_id, UA.full_name, UA.address1, UA.address2, UA.landmark, UA.pincode, UA.phone
-                                 ).join(Users, UA.user_id == Users.id).filter(Users.phone_number == context['phone']).all())
-        return response_formatter(data=address_data)
+                                 ).join(Users, UA.user_id == Users.id).filter(Users.phone_number == context['phone']).filter(UA.is_active==True).all())
+            logger.info(address_data)
+        return address_data
     except Exception as ex:
         logger.exception(ex)
 
@@ -62,10 +84,10 @@ def add_address(request: Request, address: UserAddress):
             session.commit()
 
             logger.info("Address Added!")
-            return response_formatter(data={"success": True})
+            return {"success": True}
     except Exception as ex:
         logger.exception(ex)
-        return response_formatter(data={"success": False})
+        return {"success": False}
 
 
 @router.delete("/delete-address")
@@ -81,10 +103,10 @@ def delete_address(request: Request, address: RemoveAddress):
             })
             session.commit()
             logger.info("address updated")
-        return response_formatter({"success": True})
+        return {"success": True}
     except Exception as ex:
         logger.exception(ex)
-        return response_formatter({"success": "False"})
+        return {"success": "False"}
     
 @router.put("/update-address")
 def update_address(request: Request, address: UpdateAddress):
@@ -102,7 +124,7 @@ def update_address(request: Request, address: UpdateAddress):
             })
             session.commit()
             logger.info("address updated")
-        return response_formatter({"success": True})
+        return {"success": True}
     except Exception as ex:
         logger.exception(ex)
-        return response_formatter({"success": False})
+        return {"success": False}

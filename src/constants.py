@@ -15,9 +15,9 @@ def get_config(source="datasource", key=None) -> dict | str | None:
         return ''
 
 
-def response_formatter(data, error=False, status_code=200, status_value="OK"):
-    """ Response handler """
-    # Version change - Major.Minor.Patch
-    return {"version": {"name": "freelancer-engine", "version": "0.0.1"},
-            "status": {"code": status_code, "value": status_value},
-            "data": data, "error": error}
+# def response_formatter(data, error=False, status_code=200, status_value="OK"):
+#     """ Response handler """
+#     # Version change - Major.Minor.Patch
+#     return {"version": {"name": "freelancer-engine", "version": "0.0.1"},
+#             "status": {"code": status_code, "value": status_value},
+#             "data": data, "error": error}
