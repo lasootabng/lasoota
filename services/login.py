@@ -79,7 +79,7 @@ def login_user(user_login: userLogin):
                 phone_number=user_login.phone,
                 role_type=user_login.role,
                 is_verified=False)
-                
+
                 session.add(query)
                 session.commit()
                 logger.info("User created!")
@@ -97,7 +97,7 @@ def login_user(user_login: userLogin):
         )
         logger.info("OTP saved")
         # sending otp to user
-        logger.info(f"user email: {users_data[0].email}")
+        # logger.info(f"user email: {users_data[0].ema/il}")
         # mail_otp(user.email, otp, "Bipul")
         return {"success": True}
     except Exception as ex:

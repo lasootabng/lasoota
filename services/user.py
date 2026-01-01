@@ -13,34 +13,38 @@ def get_user(request: Request):
         context = request.state.context
         logger.info(f"user info: {context}")
         with session_scope() as session:
-            user_data = session.query(Users.full_name, Users.email, Users.phone_number, Users.role_type).filter(Users.phone_number == context['phone']).all()
+            user_data = receive_query(session.query(Users.full_name, Users.email, Users.phone_number, Users.role_type
+                                                    ).filter(Users.phone_number == context['phone']).all())
         if user_data:
             user_data = user_data[0]
         else:
             raise HTTPException(status_code=401, detail="something wents wrong!")
         logger.info(f"users Data: {user_data}")
-        user_info = {
-                    "user": {"full_name": user_data.full_name,
-                             "phone_number": user_data.phone_number,
-                             "user_role": user_data.role_type
-                             },
-                    "helpline_number": '7870743082'
-                }
-        return user_info
+        # user_info = {
+        #             "user": {"full_name": user_data.full_name,
+        #                      "phone_number": user_data.phone_number,
+        #                      "user_role": user_data.role_type
+        #                      },
+        #             "helpline_number": '7870743082'
+        #         }
+        return user_data
     except Exception as ex:
         logger.exception(ex)
 
-@router.post("/update-user")
+@router.put("/update-user")
 async def register_user(request: Request, user: UpdateUser):
 
     try:
         context = request.state.context
 
+        logger.info(f"User Context: {context}")
+
         # check user phone is already registered or not
         with session_scope() as session:
-            session.query(Users).filter(Users.phone_number==context['Phone']).update({
+            session.query(Users).filter(Users.id==context['user_id']).update({
                     Users.full_name: user.full_name,
-                    Users.email: user.email
+                    Users.email: user.email,
+                    Users.phone_number: user.phone
                 })
             session.commit()
             logger.info("user details updated")
@@ -74,11 +78,11 @@ def add_address(request: Request, address: UserAddress):
             query = UA(
                 user_id=context['user_id'],
                 full_name=address.full_name,
-                address1=address.house,
-                address2=address.area,
+                address1=address.address1,
+                address2=address.address2,
                 landmark=address.landmark,
                 pincode=address.pincode,
-                phone=address.mobile 
+                phone=address.phone 
             )
             session.add(query)
             session.commit()
@@ -111,15 +115,15 @@ def delete_address(request: Request, address: RemoveAddress):
 @router.put("/update-address")
 def update_address(request: Request, address: UpdateAddress):
     try:
-        logger.info(address.remove_address.address_id)
+        logger.info(address.address_id)
         with session_scope() as session:
-            session.query(UA).filter(UA.address_id==address.remove_address.address_id).update({
-                UA.full_name: address.user_address.full_name,
-                UA.address1:address.user_address.house,
-                UA.address2:address.user_address.area,
-                UA.landmark:address.user_address.landmark,
-                UA.pincode:address.user_address.pincode,
-                UA.phone:address.user_address.mobile,
+            session.query(UA).filter(UA.address_id==address.address_id).update({
+                UA.full_name: address.full_name,
+                UA.address1:address.address1,
+                UA.address2:address.address2,
+                UA.landmark:address.landmark,
+                UA.pincode:address.pincode,
+                UA.phone:address.phone,
                 UA.updated_on:datetime.now()
             })
             session.commit()
