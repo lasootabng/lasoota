@@ -2,7 +2,6 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
-from library.utils.otp import generate_otp
 from library.cache.cache import get_pending_signup, save_pending_signup, delete_pending_signup
 from library.db import session_scope, Users
 from src.logger import logger
@@ -32,6 +31,10 @@ def create_access_token(data: dict, expiry: timedelta | None = None, refresh: bo
     token = jwt.encode(payload=payload, key=SECRET_KEY, algorithm=ALGORITHM)
     return token
 
+def generate_otp():
+    code = random.randint(1000, 9999)
+    expire_time = datetime.datetime.now() + datetime.timedelta(minutes=15)
+    return code, expire_time
 
 @router.post("/validate-otp")
 def validate_otp(otp_val: ValidOTP):

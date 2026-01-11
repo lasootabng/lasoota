@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, constr, validator
-from typing import Literal, Optional, List
+from typing import Literal, Optional, List, TypedDict
 
 class UpdateUser(BaseModel):
     full_name: str
@@ -56,17 +56,21 @@ class CartItem(BaseModel):
     quantity: int
 
 
-class BookingState(BaseModel):
-    service: str | None = None
-    service_code: str | None = None
-    quantity: int | None = None
-    schedule: str | None = None
-    location: str | None = None
-    notes: str | None = None
+# class BookingState(BaseModel):
+#     service: str | None = None
+#     service_code: str | None = None
+#     quantity: int | None = None
+#     schedule: str | None = None
+#     location: str | None = None
+#     notes: str | None = None
 
-    cart: list = []
-    confirmed: bool = False
-    estimate: dict | None = None
+#     cart: list = []
+#     confirmed: bool = False
+#     estimate: dict | None = None
 
-    user_message: str | None = None   # 👈 ADD THIS
-    last_bot_message: str | None = None
+#     user_message: str | None = None   # 👈 ADD THIS
+#     last_bot_message: str | None = None
+
+class ChatState(TypedDict):
+    messages: List
+    selected_code: Optional[str]
