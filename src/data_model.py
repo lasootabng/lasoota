@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, constr, validator
-from typing import Literal, Optional
+from typing import Literal, Optional, List
 
 class UpdateUser(BaseModel):
     full_name: str
@@ -23,7 +23,9 @@ class ValidOTP(BaseModel):
 
 class Token(BaseModel):
     access_token: str
-    phone: constr(min_length=10, max_length=13)  # type: ignore
+    refresh_token: str
+    token_type: str
+    # phone: constr(min_length=10, max_length=13)  # type: ignore
 
 class ContactUS(BaseModel):
     comment: str
@@ -47,3 +49,24 @@ class UpdateAddress(BaseModel):
     landmark: str
     pincode: constr(min_length=6, max_length=6) # type: ignore
     phone: constr(min_length=10, max_length=13) # type: ignore
+
+
+class CartItem(BaseModel):
+    code: str
+    quantity: int
+
+
+class BookingState(BaseModel):
+    service: str | None = None
+    service_code: str | None = None
+    quantity: int | None = None
+    schedule: str | None = None
+    location: str | None = None
+    notes: str | None = None
+
+    cart: list = []
+    confirmed: bool = False
+    estimate: dict | None = None
+
+    user_message: str | None = None   # 👈 ADD THIS
+    last_bot_message: str | None = None

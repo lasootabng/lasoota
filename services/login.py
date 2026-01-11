@@ -2,11 +2,12 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
-from library.otp.otp import generate_otp
+from library.utils.otp import generate_otp
 from library.cache.cache import get_pending_signup, save_pending_signup, delete_pending_signup
 from library.db import session_scope, Users
 from src.logger import logger
 from src.data_model import userLogin, ValidOTP, Token
+import uuid
 
 router = APIRouter()
 
@@ -14,19 +15,22 @@ router = APIRouter()
 SECRET_KEY = "e1f6a9c3b7d2e5f8a1c9d4e7b6a2f9c1d3e5a7b8c9d0f2a6b4c8d9e3f7a2b5c"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 3000
+REFRESH_TOKEN_EXPIRE = 7
 
 
 
+def create_access_token(data: dict, expiry: timedelta | None = None, refresh: bool=False):
+    payload = {}
+    # to_encode = data.copy()
+    payload['user' ] = data
+    payload['exp'] = datetime.now(timezone.utc) + (
+        expiry if expiry is not None else timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
+    payload['jti'] = str(uuid.uuid4())
+    payload['refresh'] = refresh
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
-    else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    token = jwt.encode(payload=payload, key=SECRET_KEY, algorithm=ALGORITHM)
+    return token
 
 
 @router.post("/validate-otp")
@@ -58,11 +62,17 @@ def validate_otp(otp_val: ValidOTP):
         # send Access token
         logger.info("Generating Access Token")
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        data={"sub": "Bipulsingh", "phone": otp_val.phone, "user_id": user_data[0].id}
         access_token = create_access_token(
-            data={"sub": "Bipulsingh", "phone": otp_val.phone, "user_id": user_data[0].id}, expires_delta=access_token_expires
+            data=data
+        )
+        refresh_token = create_access_token(
+            data=data,
+            refresh=True,
+            expiry=timedelta(days=REFRESH_TOKEN_EXPIRE)
         )
         logger.info("Return response")
-        return Token(access_token=f"Bearer {access_token}", phone=otp_val.phone)
+        return Token(access_token=access_token, refresh_token=refresh_token, token_type= "bearer")
     else:
         logger.info("invalid OTP")
     return JSONResponse(content={"message": "invalid OTP"}, status_code=400)
