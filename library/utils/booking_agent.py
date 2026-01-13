@@ -36,7 +36,7 @@ llm = ChatOpenAI(
 )
 
 SERVICE_CONTEXT = build_service_context()
-
+print("service context: ", SERVICE_CONTEXT)
 SYSTEM_PROMPT = f"""
 You are a friendly household electrician booking assistant.
 

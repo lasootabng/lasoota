@@ -14,7 +14,7 @@ def get_user(request: Request):
         logger.info(f"user info: {context}")
         with session_scope() as session:
             user_data = receive_query(session.query(Users.full_name, Users.email, Users.phone_number, Users.role_type
-                                                    ).filter(Users.phone_number == context['phone']).all())
+                                                    ).filter(Users.phone_number == context['user']['phone']).all())
         if user_data:
             user_data = user_data[0]
         else:

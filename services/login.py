@@ -1,4 +1,5 @@
 import jwt
+import random
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
@@ -33,7 +34,7 @@ def create_access_token(data: dict, expiry: timedelta | None = None, refresh: bo
 
 def generate_otp():
     code = random.randint(1000, 9999)
-    expire_time = datetime.datetime.now() + datetime.timedelta(minutes=15)
+    expire_time = datetime.now() + timedelta(minutes=15)
     return code, expire_time
 
 @router.post("/validate-otp")
@@ -64,7 +65,7 @@ def validate_otp(otp_val: ValidOTP):
 
         # send Access token
         logger.info("Generating Access Token")
-        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        # access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         data={"sub": "Bipulsingh", "phone": otp_val.phone, "user_id": user_data[0].id}
         access_token = create_access_token(
             data=data
