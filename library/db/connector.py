@@ -6,7 +6,7 @@ from contextlib import contextmanager
 from src.constants import get_config
 
 
-def get_connector(schema="postgres"):
+def get_connector(schema="postgres-docker"):
     """ database connection creds """
 
     config = get_config(key=schema)

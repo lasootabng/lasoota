@@ -1,9 +1,9 @@
 from fastapi import APIRouter, WebSocket
-from langchain.messages import HumanMessage
-from library.utils.booking_agent import build_graph
+# from langchain.messages import HumanMessage
+# from library.utils.booking_agent import build_graph
 
 router = APIRouter()
-graph = build_graph()
+# graph = build_graph()
 
 @router.websocket("/ws/chat")
 async def chat(ws: WebSocket):
@@ -20,11 +20,11 @@ async def chat(ws: WebSocket):
         user_msg = await ws.receive_text()
         print("user message", user_msg)
 
-        state["messages"].append(
-            HumanMessage(content=user_msg)
-        )
+        # state["messages"].append(
+        #     HumanMessage(content=user_msg)
+        # )
 
-        state = graph.invoke(state)
+        # state = graph.invoke(state)
 
-        last_reply = state["messages"][-1].content
-        await ws.send_text(last_reply)
+        # last_reply = state["messages"][-1].content
+        await ws.send_text("I'm here to help you with your electrician needs.")

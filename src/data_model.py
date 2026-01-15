@@ -4,7 +4,7 @@ from typing import Literal, Optional, List, TypedDict
 class UpdateUser(BaseModel):
     full_name: str
     email: Optional[EmailStr] = None
-    phone: constr(min_length=10, max_length=13)  # type: ignore
+    # phone: constr(min_length=10, max_length=13)  # type: ignore
 
     @validator("email", pre=True, always=True)
     def empty_string_to_none(cls, v):
@@ -31,25 +31,26 @@ class ContactUS(BaseModel):
     comment: str
 
 class UserAddress(BaseModel):
-    full_name: str
-    address1: str
-    address2: str
-    landmark: str
-    pincode: constr(min_length=6, max_length=6) # type: ignore
-    phone: constr(min_length=10, max_length=13) # type: ignore
+    latitude: float
+    longitude: float
+    flat: str
+    society: Optional[str]
+    landmark: Optional[str]
+    city: str
+    state: str
+    pincode: str
+    phone: Optional[str]
+
 
 class RemoveAddress(BaseModel):
     address_id: int
 
 class UpdateAddress(BaseModel):
     address_id: int
-    full_name: str
-    address1: str
-    address2: str
-    landmark: str
-    pincode: constr(min_length=6, max_length=6) # type: ignore
-    phone: constr(min_length=10, max_length=13) # type: ignore
-
+    flat: str
+    society: Optional[str]
+    landmark: Optional[str]
+    phone: Optional[str]
 
 class CartItem(BaseModel):
     code: str
