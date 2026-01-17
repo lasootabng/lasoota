@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean, Float, DateTime, func, TIMESTAMP, ForeignKey
+from sqlalchemy import (Column, Integer, String, Boolean, Float,  Numeric,
+                         DateTime, UniqueConstraint, TIMESTAMP, ForeignKey,
+                           CheckConstraint, func)
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import relationship
@@ -70,26 +72,119 @@ class UserAddress(Base):
     user = relationship("Users", back_populates="addresses")
 
 
-class ServiceCategory(Base):
-    __tablename__ = "service_category"
+class Category(Base):
+    __tablename__ = "category"
 
-    category_id = Column(Integer, primary_key=True, index=True)
-    category_name = Column(String(255), nullable=False)
+    id = Column(Integer, primary_key=True, index=True)
+
+    category_name = Column(String(255), nullable=False, unique=True)
     category_order = Column(Integer, nullable=False)
-    service_image = Column(String(500))
-    created_on = Column(TIMESTAMP, server_default=func.now())
-    updated_on = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
+
+    service_image = Column(String(500), nullable=True)
+
     is_active = Column(Boolean, default=True)
 
+    created_on = Column(
+        TIMESTAMP(timezone=True),
+        server_default=func.now()
+    )
+    updated_on = Column(
+        TIMESTAMP(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now()
+    )
+
+    # 🔗 Relationships
+    sub_categories = relationship(
+        "SubCategory",
+        back_populates="category",
+        cascade="all, delete",
+        passive_deletes=True
+    )
 
 class SubCategory(Base):
     __tablename__ = "sub_category"
 
-    sub_category_id = Column(Integer, primary_key=True, index=True)
-    category_id = Column(Integer, ForeignKey("service_category.category_id", ondelete="CASCADE"), nullable=False)
-    sub_category_name = Column(String(255), nullable=False)
-    sub_category_order = Column(Integer, nullable=False)
-    sub_category_image = Column(String(500))
-    created_on = Column(TIMESTAMP, server_default=func.now())
-    updated_on = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
+    id = Column(Integer, primary_key=True, index=True)
+
+    category_id = Column(
+        Integer,
+        ForeignKey("category.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    name = Column(String(100), nullable=False)
+    icon = Column(String(255), nullable=True)
+
     is_active = Column(Boolean, default=True)
+
+    created_on = Column(DateTime(timezone=True), server_default=func.now())
+    updated_on = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now()
+    )
+
+    # Relationships
+    category = relationship(
+        "Category",
+        back_populates="sub_categories"
+    )
+
+    services = relationship(
+        "Services",
+        back_populates="sub_category",
+        cascade="all, delete"
+    )
+
+    __table_args__ = (
+        UniqueConstraint(
+            "category_id",
+            "name",
+            name="unique_subcategory_per_service"
+        ),
+    )
+
+class Services(Base):
+    __tablename__ = "services"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    sub_category_id = Column(
+        Integer,
+        ForeignKey("sub_category.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    title = Column(String(150), nullable=False)
+    price = Column(Numeric(10, 2), nullable=False)
+
+    duration_minutes = Column(Integer, nullable=True)
+
+    rating = Column(Numeric(2, 1), nullable=True)
+    review_count = Column(Integer, default=0)
+
+    is_active = Column(Boolean, default=True)
+
+    created_on = Column(DateTime(timezone=True), server_default=func.now())
+    updated_on = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now()
+    )
+
+    # Relationships
+    sub_category = relationship(
+        "SubCategory",
+        back_populates="services"
+    )
+
+    __table_args__ = (
+        CheckConstraint("price >= 0", name="check_price_positive"),
+        CheckConstraint("rating BETWEEN 0 AND 5", name="check_rating_range"),
+        CheckConstraint("review_count >= 0", name="check_review_count_positive"),
+        CheckConstraint(
+            "duration_minutes IS NULL OR duration_minutes > 0",
+            name="check_duration_positive"
+        ),
+    )
