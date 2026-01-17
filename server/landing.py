@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Request, HTTPException
 from src.logger import logger
-# from src.constants import response_formatter
 from library.db import session_scope, receive_query, ServiceCategory as Cat, SubCategory as SubCat
 
 router = APIRouter()
