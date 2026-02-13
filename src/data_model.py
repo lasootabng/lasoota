@@ -55,23 +55,3 @@ class UpdateAddress(BaseModel):
 class CartItem(BaseModel):
     code: str
     quantity: int
-
-
-# class BookingState(BaseModel):
-#     service: str | None = None
-#     service_code: str | None = None
-#     quantity: int | None = None
-#     schedule: str | None = None
-#     location: str | None = None
-#     notes: str | None = None
-
-#     cart: list = []
-#     confirmed: bool = False
-#     estimate: dict | None = None
-
-#     user_message: str | None = None   # 👈 ADD THIS
-#     last_bot_message: str | None = None
-
-class ChatState(TypedDict):
-    messages: List
-    selected_code: Optional[str]

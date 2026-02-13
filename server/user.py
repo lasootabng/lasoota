@@ -20,13 +20,6 @@ def get_user(request: Request):
         else:
             raise HTTPException(status_code=401, detail="UnAuthorized!")
         logger.info(f"users Data: {user_data}")
-        # user_info = {
-        #             "user": {"full_name": user_data.full_name,
-        #                      "phone_number": user_data.phone_number,
-        #                      "user_role": user_data.role_type
-        #                      },
-        #             "helpline_number": '7870743082'
-        #         }
         return user_data
     except Exception as ex:
         logger.exception(ex)
