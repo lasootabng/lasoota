@@ -83,7 +83,7 @@ class Catalog(Base):
     updated_on = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
 
     # 🔗 Relationships
-    sub_categories = relationship(
+    category = relationship(
         "Category",
         back_populates="catalog",
         cascade="all, delete",
@@ -106,7 +106,7 @@ class Category(Base):
     # 🔗 Relationships
     catalog = relationship(
         "Catalog",
-        back_populates="categories"
+        back_populates="category"
     )
 
     services = relationship(

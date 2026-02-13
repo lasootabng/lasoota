@@ -24,7 +24,7 @@ def build_category_response(category_name: str, rows: list[dict]):
         if cat_id not in categories_map:
             categories_map[cat_id] = {
                 "id": cat_id,
-                "name": row["name"],
+                "name": row["category_name"],
                 "icon": f'{row["icon"]}'
             }
 
@@ -39,7 +39,7 @@ def build_category_response(category_name: str, rows: list[dict]):
             "duration_minutes": row["duration_minutes"],
             "rating": float(row["rating"]) if isinstance(row["rating"], Decimal) else row["rating"],
             "review_count": row["review_count"],
-            "variable_pricing": False if isinstance(row["price_max"], None) else True,
+            "variable_pricing": False if isinstance(row["price_max"], type(None)) else True,
             "pricing_note": row["pricing_note"]
         })
 
@@ -65,7 +65,7 @@ def get_services(request: Request, catalog: str | None= "electrician"):
                             Cat.is_active == True,
                             Cgry.is_active == True,
                             Srv.is_active == True
-                        ).all())
+                        ).order_by(Srv.id).all())
             data = build_category_response(catalog, data)
             logger.info(data)
         return data
