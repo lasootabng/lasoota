@@ -1,20 +1,21 @@
 import jwt
 import random
 from datetime import datetime, timedelta, timezone
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
 from library.cache.cache import get_pending_signup, save_pending_signup, delete_pending_signup
 from library.db import session_scope, Users
 from src.logger import logger
-from src.data_model import userLogin, ValidOTP, Token
+from src.data_model import userLogin, ValidOTP, Token, RefreshToken
 import uuid
 
 router = APIRouter()
 
 
 SECRET_KEY = "e1f6a9c3b7d2e5f8a1c9d4e7b6a2f9c1d3e5a7b8c9d0f2a6b4c8d9e3f7a2b5c"
+REFRESH_SECRET_KEY = "e6f6a7c3b7d9e5f8a1c9d4e7b1a2f9c1d3e5a7b8c2d0f2a6b4c8d9e3f9a2b5c"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 3000
+ACCESS_TOKEN_EXPIRE_MINUTES = 15 # 3000
 REFRESH_TOKEN_EXPIRE = 7
 
 
@@ -31,6 +32,26 @@ def create_access_token(data: dict, expiry: timedelta | None = None, refresh: bo
 
     token = jwt.encode(payload=payload, key=SECRET_KEY, algorithm=ALGORITHM)
     return token
+
+def verify_refresh_token(refresh_token: str):
+    try:
+        logger.info(f"refresh token to decode: {refresh_token}")
+        payload = jwt.decode(
+            refresh_token,
+            # REFRESH_SECRET_KEY,
+            SECRET_KEY,
+            algorithms=["HS256"]
+        )
+
+        logger.info(f"Payload: {payload}")
+
+        if not payload.get("refresh"):
+            raise PermissionError
+
+        return payload
+
+    except Exception:
+        raise PermissionError
 
 def generate_otp():
     code = random.randint(1000, 9999)
@@ -139,3 +160,42 @@ def resend_otp(user_login: userLogin):
     except Exception as ex:
         logger.exception(ex)
         return JSONResponse(content={"success": False}, status_code=500)
+
+
+@router.post("/auth/refresh")
+def refresh_token(token: RefreshToken):
+    try:
+        logger.info(token)
+        payload = verify_refresh_token(token.refresh_token)
+        logger.info(payload)
+        # send Access token
+        logger.info("Generating Access Token")
+        # access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        data={"sub": "Bipulsingh", "phone": payload['user']['phone'], "user_id": payload['user']['user_id']}
+        access_token = create_access_token(
+            data=data
+        )
+        refresh_token = create_access_token(
+            data=data,
+            refresh=True,
+            expiry=timedelta(days=REFRESH_TOKEN_EXPIRE)
+        )
+        logger.info("Return response")
+        return Token(access_token=access_token, refresh_token=refresh_token, token_type= "bearer")
+    except PermissionError:
+        raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={
+                    "code": "REFRESH_TOKEN_EXPIRED",
+                    "message": "Refresh token expired"
+                }
+            )
+    except Exception as ex:
+        logger.exception(ex)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "code": "AUTH_ERROR",
+                "message": "Authentication failed"
+            }
+        )

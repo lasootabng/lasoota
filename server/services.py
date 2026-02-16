@@ -2,8 +2,8 @@ import re
 from decimal import Decimal
 from fastapi import APIRouter, Request, HTTPException
 from src.logger import logger
-
-from library.db import session_scope, Catalog as Cat, Category as Cgry, Services as Srv, receive_query
+from src.data_model import OrderCreate
+from library.db import session_scope, Catalog as Cat, Category as Cgry, Services as Srv, Order, OrderItem, receive_query
 
 router = APIRouter()
 
@@ -69,6 +69,53 @@ def get_services(request: Request, catalog: str | None= "electrician"):
             data = build_category_response(catalog, data)
             logger.info(data)
         return data
+    except Exception as ex:
+        logger.exception(ex)
+        raise HTTPException(status_code=500, detail="Something went wrong!")
+    
+@router.post("/orders/create")
+def create_order(request: Request, order: OrderCreate):
+    try:
+        context = request.state.context
+        logger.info(f"user request: {context['user']['user_id']}")
+        with session_scope() as session:
+            try:
+                query = Order(
+                    user_id=context['user']['user_id'],
+                    address_id=order.address_id,
+                    slot_type=order.slot_type,
+                    scheduled_date=order.scheduled_date,
+                    scheduled_time=order.scheduled_time,
+                    tip_amount=order.tip_amount,
+                    subtotal=order.total_amount,
+                    taxes=9.00,
+                    total_amount=order.total_amount,
+                    payment_method=order.payment_method,
+                )
+                session.add(query)
+                session.flush()
+
+                order_id = int(query.id)
+                
+                logger.info(f"order created: {order_id}")
+
+                for service in order.services:
+                    item = OrderItem(
+                        order_id=order_id,
+                        service_id=service.service_id,
+                        quantity=service.quantity
+                    )
+                    session.add(item)
+                
+                session.commit()
+            except Exception as ex:
+                session.rollback()
+                raise ValueError
+        return {
+            "success": True,
+            "order_id": order_id,
+            "message": "Order created successfully"
+        }
     except Exception as ex:
         logger.exception(ex)
         raise HTTPException(status_code=500, detail="Something went wrong!")

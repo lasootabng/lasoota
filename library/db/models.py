@@ -1,6 +1,6 @@
 from sqlalchemy import (Column, Integer, String, Boolean, Float,  Numeric,
                          DateTime, UniqueConstraint, TIMESTAMP, ForeignKey,
-                           CheckConstraint, func)
+                           CheckConstraint, Date, Time, func)
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import relationship
@@ -163,4 +163,49 @@ class Services(Base):
             "duration_minutes IS NULL OR duration_minutes > 0",
             name="services_duration_minutes_check"
         ),
+    )
+
+class Order(Base):
+    __tablename__ = "orders"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, nullable=False)
+    address_id = Column(Integer, nullable=False)
+    slot_type = Column(String(20), nullable=False)
+    scheduled_date = Column(Date, nullable=True)
+    scheduled_time = Column(Time, nullable=True)
+    tip_amount = Column(Numeric(10, 2), default=0.00)
+    subtotal = Column(Numeric(10, 2), nullable=False)
+    visit_fee = Column(Numeric(10, 2), default=99.00)
+    taxes = Column(Numeric(10, 2), default=9.00)
+    total_amount = Column(Numeric(10, 2), nullable=False)
+    payment_method = Column(String(20), default="cash")
+    payment_status = Column(String(20), default="pending")
+    order_status = Column(String(20), default="pending")
+    professional_id = Column(String, nullable=True)
+    created_on = Column(DateTime(timezone=True), server_default=func.now())
+    updated_on = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    # 🔗 Relationships
+    items = relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")
+
+    __table_args__ = (
+        CheckConstraint("slot_type IN ('instant', 'later')", name="check_slot_type"),
+    )
+
+
+class OrderItem(Base):
+    __tablename__ = "order_items"
+
+    id = Column(Integer, primary_key=True, index=True)
+    order_id = Column(Integer, ForeignKey("orders.id", ondelete="CASCADE"), nullable=False)
+    service_id = Column(Integer, ForeignKey("services.id"), nullable=False)
+    quantity = Column(Integer, nullable=False)
+
+    # 🔗 Relationships
+    order = relationship("Order", back_populates="items")
+    service = relationship("Services") # Links directly to your existing Services model
+
+    __table_args__ = (
+        CheckConstraint("quantity > 0", name="check_quantity_positive"),
     )
