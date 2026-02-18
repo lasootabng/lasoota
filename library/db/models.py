@@ -1,6 +1,6 @@
 from sqlalchemy import (Column, Integer, String, Boolean, Float,  Numeric,
                          DateTime, UniqueConstraint, TIMESTAMP, ForeignKey,
-                           CheckConstraint, Date, Time, func)
+                           CheckConstraint, Date, Time, Text, func)
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import relationship
@@ -10,7 +10,7 @@ from geoalchemy2 import Geography
 Base = declarative_base()
 
 # Define ENUM type for role
-user_role_enum = ENUM('Provider', 'Customer', name='user_role', create_type=True)
+user_role_enum = ENUM('Professional', 'Customer', name='user_role', create_type=True)
 
 
 class Users(Base):
@@ -20,9 +20,7 @@ class Users(Base):
     email = Column(String(255), unique=True, nullable=False, index=True)
     phone_number = Column(String(20), nullable=True)
     full_name = Column(String(255), nullable=True)
-    # password_hash = Column(String(255), nullable=False)
     role_type = Column(user_role_enum, nullable=False, default='Customer')
-    is_verified = Column(Boolean, nullable=False, default=False)
     created_on = Column(DateTime(timezone=True), server_default=func.now())
     updated_on = Column(DateTime(timezone=True), server_default=func.now())
     is_active = Column(Boolean, default=True)   # soft delete flag
@@ -30,6 +28,13 @@ class Users(Base):
     addresses = relationship(
         "UserAddress",
         back_populates="user",   # ✅ MUST match attribute name in UserAddress
+        cascade="all, delete-orphan"
+    )
+
+    professional_profile = relationship(
+        "Professional", 
+        back_populates="user", 
+        uselist=False,           # Crucial for One-to-One
         cascade="all, delete-orphan"
     )
 
@@ -182,9 +187,11 @@ class Order(Base):
     payment_method = Column(String(20), default="cash")
     payment_status = Column(String(20), default="pending")
     order_status = Column(String(20), default="pending")
-    professional_id = Column(String, nullable=True)
+    order_number = Column(String(255), nullable=True)
+    professional_id = Column(Integer, nullable=True)
     created_on = Column(DateTime(timezone=True), server_default=func.now())
     updated_on = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    is_active = Column(Boolean, default=True)   # soft delete flag
 
     # 🔗 Relationships
     items = relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")
@@ -209,3 +216,26 @@ class OrderItem(Base):
     __table_args__ = (
         CheckConstraint("quantity > 0", name="check_quantity_positive"),
     )
+
+class Professional(Base):
+    __tablename__ = "professionals"
+
+    id = Column(Integer, primary_key=True, index=True)
+    
+    # One-to-One relationship: Unique=True is critical here
+    user_id = Column(
+        Integer, 
+        ForeignKey("users.id", ondelete="CASCADE"), 
+        nullable=False, 
+        unique=True
+    )
+    
+    # Professional-specific info
+    rating = Column(Numeric(2, 1), default=0.0)
+    bio = Column(Text, nullable=True)  # Using Text for longer descriptions
+    photo_url = Column(String(500), nullable=True)
+    is_verified = Column(Boolean, default=False)
+
+    # 🔗 Relationships
+    # This links back to the User model
+    user = relationship("Users", back_populates="professional_profile")

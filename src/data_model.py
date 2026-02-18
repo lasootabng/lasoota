@@ -83,11 +83,11 @@ class OrderCreate(BaseModel):
     total_amount: Decimal
     payment_method: str = "cash"
 
-    @field_validator('scheduled_date', 'scheduled_time')
-    @classmethod
-    def check_later_fields(cls, v, info):
-        # Logic: If slot_type is 'later', date/time should ideally not be null
-        if info.data.get('slot_type') == SlotType.LATER and v is None:
-            raise ValueError(f'{info.field_name} is required when slot_type is later')
-        return v
+    # @field_validator('scheduled_date', 'scheduled_time')
+    # @classmethod
+    # def check_later_fields(cls, v, info):
+    #     # Logic: If slot_type is 'later', date/time should ideally not be null
+    #     if info.data.get('slot_type') == SlotType.LATER and v is None:
+    #         raise ValueError(f'{info.field_name} is required when slot_type is later')
+    #     return v
 
