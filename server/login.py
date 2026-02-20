@@ -121,6 +121,7 @@ def login_user(user_login: userLogin):
         
         # Generate OTP for login
         otp, otp_timeout = generate_otp()
+        logger.info(f"New OTP {otp} - {user_login.phone}")
         
         # Save OTP in redisk
         save_pending_signup(

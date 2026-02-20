@@ -1,23 +1,23 @@
-from json import load as j_load
-from os.path import dirname, abspath
+# from json import load as j_load
+# from os.path import dirname, abspath
 
 
 
-def get_config(source="datasource", key=None) -> dict | str | None:
-    """ Get config json """
+# def get_config(source="datasource", key=None) -> dict | str | None:
+#     """ Get config json """
 
-    root_dir = dirname(dirname(abspath(__file__)))
+#     root_dir = dirname(dirname(abspath(__file__)))
 
-    try:
-        with open(root_dir + "/configuration/config.json", "r") as fp:
-            return j_load(fp)[source][key]
-    except FileNotFoundError:
-        return ''
+#     try:
+#         with open(root_dir + "/configuration/config.json", "r") as fp:
+#             return j_load(fp)[source][key]
+#     except FileNotFoundError:
+#         return ''
     
-def get_price_list():
-    root_dir = dirname(dirname(abspath(__file__)))
-    with open(root_dir + "/configuration/price_list.json", "r") as fp:
-        return j_load(fp)
+# def get_price_list():
+#     root_dir = dirname(dirname(abspath(__file__)))
+#     with open(root_dir + "/configuration/price_list.json", "r") as fp:
+#         return j_load(fp)
 
 
 

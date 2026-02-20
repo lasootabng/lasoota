@@ -2,9 +2,12 @@
 
 import sys
 import logging
-from src.constants import get_config
+# from src.constants import get_config
 
-FORMATTER = logging.Formatter(f"[{get_config('parameters', 'env')}] "
+# FORMATTER = logging.Formatter(f"[{get_config('parameters', 'env')}] "
+#                               f"[%(levelname)s]: [%(asctime)s] [%(lineno)d] [%(filename)s] [%(message)s]")
+
+FORMATTER = logging.Formatter(f"[dev] "
                               f"[%(levelname)s]: [%(asctime)s] [%(lineno)d] [%(filename)s] [%(message)s]")
 
 
