@@ -1,15 +1,15 @@
 import json
-# import redis
+from redis import Redis
 # from datetime import timedelta
-from upstash_redis import Redis
+# from upstash_redis import Redis
 from os import environ
 from dotenv import load_dotenv
 
 # Loading environment variable
 load_dotenv()
 
-# r = redis.Redis(host="localhost", port=6379, db=0)
-r = Redis(url=environ.get("UPSTASH_URL"), token=environ.get("UPSTASH_TOKEN"))
+r = Redis(host="localhost", port=6379, db=0)
+# r = Redis(url=environ.get("UPSTASH_URL"), token=environ.get("UPSTASH_TOKEN"))
 
 PENDING_TTL_SECONDS = 10 * 60  # 10 minutes
 
@@ -27,6 +27,15 @@ def get_pending_signup(signup_id: str):
 def delete_pending_signup(signup_id: str):
     key = f"pending_signup:{signup_id}"
     r.delete(key)
+
+def save_service_cache(catalog, category):
+    r.hset("servcies", catalog, json.dumps(category))
+
+def get_service_cache(catalog):
+    raw = r.hget("servcies", catalog)
+    if not raw:
+        return None
+    return json.loads(raw)
 
 
 if __name__ == '__main__':

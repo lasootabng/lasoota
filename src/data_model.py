@@ -91,3 +91,30 @@ class OrderCreate(BaseModel):
     #         raise ValueError(f'{info.field_name} is required when slot_type is later')
     #     return v
 
+# Support 
+
+SupportTopic = Literal[
+    "cancel_booking",
+    "reschedule_booking",
+    "technician_late",
+    "payment_issue",
+    "general_support",
+]
+
+class SupportMessage(BaseModel):
+    type: Literal["text", "booking_selected"] = "text"
+    text: str = Field(min_length=1)
+
+class SupportMeta(BaseModel):
+    platform: Optional[str] = None
+    app_section: Optional[str] = None
+
+class OrderSupportRequest(BaseModel):
+    conversation_id: Optional[str] = None
+    topic: SupportTopic
+    label: str
+    booking_id: Optional[int] = None
+    source: Literal["app_support_booking_help"] = "app_support_booking_help"
+    message: SupportMessage
+    meta: Optional[SupportMeta] = None
+    sent_at: str  # ISO datetime string

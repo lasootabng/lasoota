@@ -239,3 +239,53 @@ class Professional(Base):
     # 🔗 Relationships
     # This links back to the User model
     user = relationship("Users", back_populates="professional_profile")
+
+
+class SupportConversation(Base):
+    __tablename__ = "support_conversations"
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('open', 'in_progress', 'resolved', 'closed')",
+            name="support_conversations_status_check"
+        ),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    conversation_id = Column(String(100), unique=True, nullable=False)
+
+    booking_id = Column(
+        Integer,
+        ForeignKey("orders.id", ondelete="CASCADE"),
+        nullable=True
+    )
+
+    topic = Column(String(50), nullable=False)
+
+    label = Column(String(100), nullable=False)
+
+    status = Column(
+        String(20),
+        nullable=False,
+        default="open",
+        server_default="open"
+    )
+
+    created_on = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
+
+    updated_on = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now()
+    )
+
+    resolved_on = Column(
+        DateTime(timezone=True),
+        nullable=True
+    )
+
+    # Optional relationship
+    booking = relationship("Order", backref="support_conversations")
