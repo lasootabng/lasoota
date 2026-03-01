@@ -1,15 +1,15 @@
 import json
-from redis import Redis
+# from redis import Redis
 # from datetime import timedelta
-# from upstash_redis import Redis
+from upstash_redis import Redis
 from os import environ
 from dotenv import load_dotenv
 
 # Loading environment variable
 load_dotenv()
 
-r = Redis(host="localhost", port=6379, db=0)
-# r = Redis(url=environ.get("UPSTASH_URL"), token=environ.get("UPSTASH_TOKEN"))
+# r = Redis(host="localhost", port=6379, db=0)
+r = Redis(url=environ.get("UPSTASH_URL"), token=environ.get("UPSTASH_TOKEN"))
 
 PENDING_TTL_SECONDS = 10 * 60  # 10 minutes
 
